@@ -1,0 +1,28 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: go-app-scaledobject
+  namespace: kubenet
+spec:
+  cooldownPeriod: 300
+  maxReplicaCount: 3
+  minReplicaCount: 1
+  pollingInterval: 30
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: app-deployment
+  triggers:
+  - metadata:
+      httpScaledObject: go-app-http-scaled-object
+      scalerAddress: keda-add-ons-http-external-scaler.kubenet:9090
+    type: external-push
+  - metadata:
+      value: '60'
+    metricType: Utilization
+    type: cpu
+  - metadata:
+      value: '60'
+    metricType: Utilization
+    type: memory

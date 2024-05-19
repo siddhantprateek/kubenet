@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: app-deployment
+  name: app-deployment
+  namespace: kubenet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-deployment
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25% 
+      maxUnavailable: 25%
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: app-deployment
+    spec:
+      containers:
+      - image: siddhantprateek/go-app:v4
+        name: go-app
+        envFrom:
+        - configMapRef:
+            name: app-config
+        ports:
+        - containerPort: 4000
+        resources:
+          requests:
+            cpu: 1m
+            memory: 4Mi
+          limits:
+            cpu: 2m 
+            memory: 5Mi
+status: {}
